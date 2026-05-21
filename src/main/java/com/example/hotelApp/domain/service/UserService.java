@@ -37,11 +37,11 @@ public class UserService {
     }
 
     public boolean doesUserExists(String username) {
-        Optional<UserDetails> existingUser = this.userRepository.findByUsername(username);
+        Optional<User> existingUser = this.userRepository.findByUsername(username);
         return existingUser.isEmpty();
     }
 
-    public UserDetails findUserByUsername(String username) {
-        return this.userRepository.findByUsername(username).get();
-    }
+//    public UserDetails findUserByUsername(String username) {
+//        return this.userRepository.findByUsername(username).get();
+//    }
 }

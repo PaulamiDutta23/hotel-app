@@ -2,7 +2,7 @@ package com.example.hotelApp.domain.filter;
 
 import com.example.hotelApp.domain.service.JwtService;
 import com.example.hotelApp.domain.service.UserService;
-import com.example.hotelApp.domain.service.UsersDetailsService;
+//import com.example.hotelApp.domain.service.UsersDetailsService;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,13 +22,10 @@ import java.util.List;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
-
     private final JwtService jwtService;
-//    private final UsersDetailsService usersDetailsService;
 
     public JwtAuthFilter(JwtService jwtService) {
         this.jwtService = jwtService;
-//        this.usersDetailsService = usersDetailsService;
     }
 
     @Override

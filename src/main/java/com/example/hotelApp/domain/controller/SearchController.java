@@ -25,7 +25,7 @@ public class SearchController {
 
     @GetMapping("/hotels")
     public ResponseEntity<List<HotelView>> searchHotels(@RequestParam(name="city") String city, HttpServletRequest req) {
-        logger.info("{} {}", req.getMethod(), req.getRequestURI());
+        logger.info("{} {} city={}", req.getMethod(), req.getRequestURI(), city);
 
         List<HotelView> allHotels = hotelService.getHotels(city);
         return ResponseEntity.ok(allHotels);
