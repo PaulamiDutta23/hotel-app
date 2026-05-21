@@ -2,7 +2,7 @@ package com.example.hotelApp.domain.exceptions;
 
 public class HotelNotFoundException extends Throwable {
     public HotelNotFoundException(String hotelId) {
-        String template = "Hotel with id %d not found";
+        String template = "Hotel with id %s not found";
         super(String.format(template, hotelId));
     }
 }

@@ -38,8 +38,7 @@ public class BookingService {
 
     public BookingView bookHotel(String username, BookingRequest bookingRequest) throws HotelNotFoundException, InsufficientAvailableRoomsException {
         Hotel hotel = hotelRepository.findHotelById(bookingRequest.hotelId());
-        System.out.println(bookingRequest.hotelId());
-        System.out.println(hotel);
+
         if (hotel == null) throw new HotelNotFoundException(bookingRequest.hotelId());
 
         if (!hotel.isRequestedRoomsAvailable(bookingRequest.totalRooms()))

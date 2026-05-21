@@ -1,6 +1,5 @@
 package com.example.hotelApp.domain.model;
 
-import com.example.hotelApp.domain.view.HotelView;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
