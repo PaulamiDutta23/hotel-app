@@ -1,9 +1,7 @@
 package com.example.hotelApp.domain.service;
 
-import com.example.hotelApp.domain.model.Booking;
 import com.example.hotelApp.domain.model.Hotel;
 import com.example.hotelApp.domain.repository.HotelRepository;
-import com.example.hotelApp.domain.view.BookingView;
 import com.example.hotelApp.domain.view.HotelView;
 import org.springframework.stereotype.Service;
 

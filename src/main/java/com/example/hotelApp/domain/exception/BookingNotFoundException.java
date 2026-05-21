@@ -1,4 +1,4 @@
-package com.example.hotelApp.domain.exceptions;
+package com.example.hotelApp.domain.exception;
 
 public class BookingNotFoundException extends Throwable {
     public BookingNotFoundException(int bookingId) {

@@ -1,4 +1,4 @@
-package com.example.hotelApp.domain.exceptions;
+package com.example.hotelApp.domain.exception;
 
 public class InsufficientAvailableRoomsException extends Throwable {
     public InsufficientAvailableRoomsException(String hotelName, int requestRooms) {

@@ -1,8 +1,8 @@
 package com.example.hotelApp.domain.controller;
 
-import com.example.hotelApp.domain.exceptions.BookingNotFoundException;
-import com.example.hotelApp.domain.exceptions.HotelNotFoundException;
-import com.example.hotelApp.domain.exceptions.InsufficientAvailableRoomsException;
+import com.example.hotelApp.domain.exception.BookingNotFoundException;
+import com.example.hotelApp.domain.exception.HotelNotFoundException;
+import com.example.hotelApp.domain.exception.InsufficientAvailableRoomsException;
 import com.example.hotelApp.domain.service.BookingService;
 import com.example.hotelApp.domain.view.BookingRequest;
 import com.example.hotelApp.domain.view.BookingView;

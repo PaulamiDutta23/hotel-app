@@ -5,7 +5,6 @@ import com.example.hotelApp.domain.exception.InvalidUserNameCreationException;
 import com.example.hotelApp.domain.model.User;
 import com.example.hotelApp.domain.repository.UserRepository;
 import com.example.hotelApp.domain.view.UserView;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
