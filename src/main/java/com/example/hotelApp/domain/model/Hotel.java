@@ -1,7 +1,9 @@
 package com.example.hotelApp.domain.model;
 
 import com.example.hotelApp.domain.view.HotelView;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "hotels")
 public class Hotel {
     private final int id;
     private final String name;
