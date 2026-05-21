@@ -34,15 +34,16 @@ public class BookingService {
         Hotel hotel = hotelRepository.findHotelById(bookingRequest.hotelId());
 
         if (hotel == null) throw new HotelNotFoundException(bookingRequest.hotelId());
-        HotelView hotelView = hotel.project(HotelView::new);
 
-        if(!hotel.isRequestedRoomsAvailable(bookingRequest.totalRooms())) throw new InsufficientAvailableRoomsException(hotelView.name(),bookingRequest.hotelId());
+        if(!hotel.isRequestedRoomsAvailable(bookingRequest.totalRooms())) throw new InsufficientAvailableRoomsException(hotel.getName(),bookingRequest.hotelId());
+
         Hotel updatedHotel = hotel.bookRooms(bookingRequest.totalRooms());
-        HotelView updatedHotelView = updatedHotel.project(HotelView::new);
         hotelRepository.save(updatedHotel);
         double totalPrice = updatedHotel.calculatePrice(bookingRequest.totalRooms());
-        Booking booking = new Booking(++currentBookingId, username, hotelView.name(), updatedHotelView.availableRooms(), totalPrice);
+        Booking booking = new Booking(++currentBookingId, username,updatedHotel.getName(), updatedHotel.getAvailableRooms(), totalPrice);
         bookingRepository.save(booking);
+
         return booking.project(BookingView::new);
     }
+
 }

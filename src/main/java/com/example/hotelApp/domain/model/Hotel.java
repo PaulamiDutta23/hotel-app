@@ -1,8 +1,10 @@
 package com.example.hotelApp.domain.model;
 
 import com.example.hotelApp.domain.view.HotelView;
+import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@Data
 @Document(collection = "hotels")
 public class Hotel {
     private final int id;
