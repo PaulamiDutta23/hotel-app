@@ -39,8 +39,4 @@ public class UserService {
         Optional<User> existingUser = this.userRepository.findByUsername(username);
         return existingUser.isEmpty();
     }
-
-//    public UserDetails findUserByUsername(String username) {
-//        return this.userRepository.findByUsername(username).get();
-//    }
 }
