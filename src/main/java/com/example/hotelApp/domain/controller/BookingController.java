@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,13 +36,13 @@ public class BookingController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> book(@RequestBody BookingRequest bookingRequest, HttpServletRequest req) {
+    public ResponseEntity<BookingView> book(@RequestBody BookingRequest bookingRequest, HttpServletRequest req, Authentication authentication){
         logger.info("{} {}", req.getMethod(), req.getRequestURI());
         BookingView booking = null;
         try {
-            booking = bookingService.bookHotel("abc", bookingRequest);
+            booking = bookingService.bookHotel(authentication.getName(),bookingRequest);
         } catch (HotelNotFoundException | InsufficientAvailableRoomsException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(booking);
     }

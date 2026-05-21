@@ -5,6 +5,7 @@ import com.example.hotelApp.domain.exception.InvalidUserNameCreationException;
 import com.example.hotelApp.domain.model.User;
 import com.example.hotelApp.domain.repository.UserRepository;
 import com.example.hotelApp.domain.view.UserView;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,8 +21,7 @@ public class UserService {
     }
 
     public UserView register(User user) throws InvalidUserNameCreationException {
-        Optional<User> existingUser = this.userRepository.findByUsername(user.getUsername());
-        if(!existingUser.isEmpty()) {
+        if(!doesUserExists(user.getUsername())) {
            throw new InvalidUserNameCreationException("Username already exists");
         }
         this.userRepository.save(user);
@@ -29,12 +29,19 @@ public class UserService {
     }
 
     public String login(User user) throws InvalidCredentialsException {
-        Optional<User> existingUser = this.userRepository.findByUsername(user.getUsername());
-
-        if(existingUser.isEmpty()) {
+        if(doesUserExists(user.getUsername())) {
             throw new InvalidCredentialsException("Username does not exists");
         }
 
         return jwtService.generateToken(user.getUsername());
+    }
+
+    public boolean doesUserExists(String username) {
+        Optional<UserDetails> existingUser = this.userRepository.findByUsername(username);
+        return existingUser.isEmpty();
+    }
+
+    public UserDetails findUserByUsername(String username) {
+        return this.userRepository.findByUsername(username).get();
     }
 }
