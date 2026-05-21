@@ -1,5 +1,6 @@
 package com.example.hotelApp.domain.model;
 
+import com.example.hotelApp.domain.view.HotelView;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -33,5 +34,9 @@ public class  Hotel {
 
     public double calculatePrice(int rooms) {
         return pricePerDay * rooms;
+    }
+
+    public HotelView project(HotelProjector<HotelView> hotelView) {
+        return hotelView.project( id,  name,  city,  availableRooms, pricePerDay);
     }
 }
