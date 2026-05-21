@@ -1,4 +1,4 @@
 package com.example.hotelApp.domain.view;
 
-public record BookingRequest(int hotelId, int totalRooms) {
+public record BookingRequest(String hotelId, int totalRooms) {
 }

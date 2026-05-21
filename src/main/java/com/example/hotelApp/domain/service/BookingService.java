@@ -9,11 +9,10 @@ import com.example.hotelApp.domain.repository.BookingRepository;
 import com.example.hotelApp.domain.repository.HotelRepository;
 import com.example.hotelApp.domain.view.BookingRequest;
 import com.example.hotelApp.domain.view.BookingView;
-import com.example.hotelApp.domain.view.HotelView;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -39,11 +38,12 @@ public class BookingService {
 
     public BookingView bookHotel(String username, BookingRequest bookingRequest) throws HotelNotFoundException, InsufficientAvailableRoomsException {
         Hotel hotel = hotelRepository.findHotelById(bookingRequest.hotelId());
-
+        System.out.println(bookingRequest.hotelId());
+        System.out.println(hotel);
         if (hotel == null) throw new HotelNotFoundException(bookingRequest.hotelId());
 
         if (!hotel.isRequestedRoomsAvailable(bookingRequest.totalRooms()))
-            throw new InsufficientAvailableRoomsException(hotel.getName(), bookingRequest.hotelId());
+            throw new InsufficientAvailableRoomsException(hotel.getName(), bookingRequest.totalRooms());
 
         Hotel updatedHotel = hotel.bookRooms(bookingRequest.totalRooms());
         hotelRepository.save(updatedHotel);
@@ -57,43 +57,30 @@ public class BookingService {
     public byte[] generateReceipt(int bookingId) throws Exception, BookingNotFoundException {
         Optional<Booking> byId = bookingRepository.findById(bookingId);
 
-        if(byId.isEmpty()) throw new BookingNotFoundException(bookingId);
+        if (byId.isEmpty()) throw new BookingNotFoundException(bookingId);
 
         Booking booking = byId.get();
-        try (PDDocument document = new PDDocument();
-             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            PDPage page = new PDPage();
-            document.addPage(page);
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            PDPageContentStream content = new PDPageContentStream(document, page);
+            PdfWriter writer = new PdfWriter(out);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
 
-            float lineHeight = 20;
+            document.add(new Paragraph("Booking Receipt")
+                    .setBold()
+                    .setFontSize(18));
 
-            content.beginText();
-            content.newLineAtOffset(100, 650);
-            content.setFont(PDType1Font.HELVETICA, 12);
+            document.add(new Paragraph("Booking ID: " + booking.getId()));
+            document.add(new Paragraph("Total Price: " + booking.getTotalPrice()));
+            document.add(new Paragraph("Total Rooms: " + booking.getTotalRooms()));
+            document.add(new Paragraph("Hotel Name: " + booking.getHotelName()));
+            document.add(new Paragraph("Username: " + booking.getUsername()));
 
-            content.showText("Receipt");
-            content.showText("-----------------");
-
-            content.showText(String.format("Booking ID: %s", booking.getId()));
-            content.newLineAtOffset(0, -lineHeight);
-            content.showText(String.format("Total Price: %.2f", booking.getTotalPrice()));
-            content.newLineAtOffset(0, -lineHeight);
-            content.showText(String.format("Total Rooms: %d", booking.getTotalRooms()));
-            content.newLineAtOffset(0, -lineHeight);
-            content.showText(String.format("Hotel Name: %s", booking.getHotelName()));
-            content.newLineAtOffset(0, -lineHeight);
-            content.showText(String.format("Username: %s", booking.getUsername()));
-
-            content.endText();
-
-            content.close();
-
-            document.save(out);
+            document.close();
             return out.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
     }
 }

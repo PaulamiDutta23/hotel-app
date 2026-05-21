@@ -2,18 +2,20 @@ package com.example.hotelApp.domain.model;
 
 import com.example.hotelApp.domain.view.HotelView;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document(collection = "hotels")
-public class Hotel {
-    private final int id;
+public class  Hotel {
+    @Id
+    private final String id;
     private final String name;
     private final String city;
     private final double pricePerDay;
     private final int availableRooms;
 
-    public Hotel(int id, String name, String city, int availableRooms,double pricePerDay) {
+    public Hotel(String id, String name, String city, int availableRooms,double pricePerDay) {
         this.id = id;
         this.name = name;
         this.city = city;
@@ -25,9 +27,6 @@ public class Hotel {
         return availableRooms >= requestedRooms;
     }
 
-    public HotelView project(HotelProjector<HotelView> hotelProjector) {
-        return hotelProjector.project(id,name,city,availableRooms,pricePerDay);
-    }
 
     public Hotel bookRooms(int rooms) {
         return new Hotel(id,name,city,availableRooms-rooms,pricePerDay);

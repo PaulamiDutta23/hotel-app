@@ -43,25 +43,25 @@ public class BookingController {
     }
 
     @PostMapping()
-    public ResponseEntity<BookingView> book(@RequestBody BookingRequest bookingRequest, HttpServletRequest req) {
+    public ResponseEntity<?> book(@RequestBody BookingRequest bookingRequest, HttpServletRequest req) {
         logger.info("{} {}", req.getMethod(), req.getRequestURI());
         BookingView booking = null;
         try {
             booking = bookingService.bookHotel("abc", bookingRequest);
         } catch (HotelNotFoundException | InsufficientAvailableRoomsException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok(booking);
     }
 
     @GetMapping("{bookingId}/receipt.pdf")
-    public ResponseEntity<byte[]> downloadReceipt(@PathVariable String bookingId) throws Exception {
+    public ResponseEntity<?> downloadReceipt(@PathVariable String bookingId) throws Exception {
 
         byte[] bytes = null;
         try {
             bytes = bookingService.generateReceipt(Integer.parseInt(bookingId));
         } catch (BookingNotFoundException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=receipt.pdf")
