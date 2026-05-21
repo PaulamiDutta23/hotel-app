@@ -1,13 +1,16 @@
 package com.example.hotelApp.domain.model;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document
 public class User {
-    private final String username;
-    private final String password;
+    @Id
+    private String id;
+    private String username;
+    private String password;
 
     public User(String username, String password) {
         this.username = username;

@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  server:
+    build: .
+    container_name: hotel-app
+    ports:
+      - "8080:8080"
+    environment:
+      HOTEL_MONGO_URI: mongodb://mongo:27017/hoteldb
+    depends_on:
+      - mongo
+    networks:
+      - backend
+
+  mongo:
+    image: mongo:7
+    container_name: hotel-mongodb
+    ports:
+      - "27017:27017"
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - backend
+
+volumes:
+  mongo_data:
+
+networks:
+  backend:
+    driver: bridge

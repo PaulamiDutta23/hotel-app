@@ -1,5 +1,6 @@
 package com.example.hotelApp.domain.controller;
 
+import com.example.hotelApp.domain.exception.InvalidCredentialsException;
 import com.example.hotelApp.domain.exception.InvalidUserNameCreationException;
 import com.example.hotelApp.domain.model.User;
 import com.example.hotelApp.domain.service.UserService;
@@ -23,5 +24,10 @@ public class AuthController {
     public ResponseEntity<UserView> registerUser(@RequestBody User user) throws InvalidUserNameCreationException {
         UserView userView = userService.register(user);
         return ResponseEntity.ok(userView);
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody User user) throws InvalidCredentialsException {
+        return this.userService.login(user);
     }
 }

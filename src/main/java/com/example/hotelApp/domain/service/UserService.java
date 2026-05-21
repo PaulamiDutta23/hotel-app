@@ -1,5 +1,6 @@
 package com.example.hotelApp.domain.service;
 
+import com.example.hotelApp.domain.exception.InvalidCredentialsException;
 import com.example.hotelApp.domain.exception.InvalidUserNameCreationException;
 import com.example.hotelApp.domain.model.User;
 import com.example.hotelApp.domain.repository.UserRepository;
@@ -11,9 +12,11 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, JwtService jwtService) {
         this.userRepository = userRepository;
+        this.jwtService = jwtService;
     }
 
     public UserView register(User user) throws InvalidUserNameCreationException {
@@ -23,5 +26,15 @@ public class UserService {
         }
         this.userRepository.save(user);
         return new UserView(user.getUsername(), user.getPassword());
+    }
+
+    public String login(User user) throws InvalidCredentialsException {
+        Optional<User> existingUser = this.userRepository.findByUsername(user.getUsername());
+
+        if(existingUser.isEmpty()) {
+            throw new InvalidCredentialsException("Username does not exists");
+        }
+
+        return jwtService.generateToken(user.getUsername());
     }
 }

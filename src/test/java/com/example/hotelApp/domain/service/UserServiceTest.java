@@ -20,16 +20,19 @@ class UserServiceTest {
     @Autowired
     UserRepository userRepo;
 
+    @Autowired
+    JwtService jwtService;
+
     @Test
     void shouldRegisterTheUser() throws InvalidUserNameCreationException {
-        UserService userService = new UserService(userRepo);
+        UserService userService = new UserService(userRepo, jwtService);
         UserView user = userService.register(new User("haji", "1234"));
         assertEquals(new UserView("haji", "1234"), user);
     }
 
     @Test
     void shouldThrowForCreatingWithExistingUserName() throws InvalidUserNameCreationException {
-        UserService userService = new UserService(userRepo);
+        UserService userService = new UserService(userRepo, jwtService);
         userService.register(new User("anonymous", "1234"));
         InvalidUserNameCreationException exception = assertThrows(InvalidUserNameCreationException.class, () -> userService.register(new User("anonymous", "1234")));
         assertEquals("Username already exists", exception.getMessage());

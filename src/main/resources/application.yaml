@@ -1,3 +1,7 @@
 spring:
   application:
     name: hotelApp
+
+  data:
+    mongodb:
+      uri: ${HOTEL_MONGO_URI:mongodb://localhost:27017/hoteldb}
