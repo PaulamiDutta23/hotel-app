@@ -1,9 +1,11 @@
 package com.example.hotelApp.domain.model;
 
 import com.example.hotelApp.domain.view.BookingView;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@Data
 @Document(collection = "bookings")
 public class Booking {
     @Id
@@ -23,5 +25,15 @@ public class Booking {
 
     public BookingView project(BookingProjector<BookingView> bookingProjector) {
         return bookingProjector.project(id, username, hotelName, totalRooms,  totalPrice);
+    }
+
+    @Override
+    public String toString() {
+        return "Booking Receipt" +
+                "id=" + id + "\n"+
+                " totalPrice=" + totalPrice +  "\n"+
+                " totalRooms=" + totalRooms + "\n"+
+                " hotelName='" + hotelName + "\n" +
+                " username='" + username + "\n";
     }
 }
