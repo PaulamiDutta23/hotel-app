@@ -9,7 +9,7 @@ RUN gradle dependencies --no-daemon || true
 
 COPY src ./src
 
-RUN gradle clean bootJar --no-daemon
+RUN gradle bootJar --no-daemon
 
 FROM eclipse-temurin:25-jre
 
@@ -17,6 +17,6 @@ WORKDIR /app
 
 COPY --from=builder /app/build/libs/*.jar app.jar
 
-EXPOSE 3000
+EXPOSE 5000
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

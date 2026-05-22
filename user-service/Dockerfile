@@ -9,7 +9,7 @@ RUN gradle dependencies --no-daemon || true
 
 COPY src ./src
 
-RUN gradle clean bootJar --no-daemon
+RUN gradle bootJar --no-daemon
 
 FROM eclipse-temurin:25-jre
 

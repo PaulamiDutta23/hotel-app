@@ -12,37 +12,43 @@ services:
       - user-service
       - booking-service
       - search-service
-      - mongo
     restart: unless-stopped
-    environment:
-      HOTEL_MONGO_URI: mongodb://mongo:27017/hoteldb
 
   mongo:
     image: mongo:7
     container_name: hotel-mongodb
     ports:
-      - "27017:27017"
+      - "27015:27017"
     restart: unless-stopped
     volumes:
       - mongo_data:/data/db
 
   user-service:
-    build: ./user-service
+    build:
+      context: ./user-service
     container_name: user-service
-    expose:
-      - "3000"
+    depends_on:
+      - mongo
+    environment:
+      HOTEL_MONGO_URI: mongodb://mongo:27017/hoteldb
 
   booking-service:
-    build: ./booking-service
+    build:
+      context: ./booking-service
     container_name: booking-service
-    expose:
-      - "4000"
+    depends_on:
+      - mongo
+    environment:
+      HOTEL_MONGO_URI: mongodb://mongo:27017/hoteldb
 
   search-service:
-    build: ./search-service
+    build:
+      context: ./search-service
     container_name: search-service
-    expose:
-      - "5000"
+    depends_on:
+      - mongo
+    environment:
+      HOTEL_MONGO_URI: mongodb://mongo:27017/hoteldb
 
 volumes:
   mongo_data:

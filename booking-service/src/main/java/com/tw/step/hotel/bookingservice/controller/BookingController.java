@@ -36,13 +36,13 @@ public class BookingController {
     }
 
     @PostMapping()
-    public ResponseEntity<BookingView> book(@RequestBody BookingRequest bookingRequest, HttpServletRequest req, Authentication authentication){
+    public ResponseEntity<?> book(@RequestBody BookingRequest bookingRequest, HttpServletRequest req, Authentication authentication){
         logger.info("{} {}", req.getMethod(), req.getRequestURI());
         BookingView booking = null;
         try {
             booking = bookingService.bookHotel(authentication.getName(),bookingRequest);
         } catch (HotelNotFoundException | InsufficientAvailableRoomsException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok(booking);
     }
