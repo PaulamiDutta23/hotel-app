@@ -1,18 +1,21 @@
-version: "3.9"
+version: '3.9'
 
 services:
-  server:
-    build: .
-#    container_name: hotel-app
-    deploy:
-      replicas: 3
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "3000:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - user-service
+      - booking-service
+      - search-service
+      - mongo
+    restart: unless-stopped
     environment:
       HOTEL_MONGO_URI: mongodb://mongo:27017/hoteldb
-    depends_on:
-      - mongo
-    networks:
-      - backend
-
 
   mongo:
     image: mongo:7
@@ -22,26 +25,24 @@ services:
     restart: unless-stopped
     volumes:
       - mongo_data:/data/db
-    networks:
-      - backend
 
-  nginx:
-    image : nginx:latest
-    container_name: nginx_proxy
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    expose:
+      - "3000"
 
-    ports:
-      - "3000:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - server
-    restart: unless-stopped
-    networks:
-      - backend
+  booking-service:
+    build: ./booking-service
+    container_name: booking-service
+    expose:
+      - "4000"
+
+  search-service:
+    build: ./search-service
+    container_name: search-service
+    expose:
+      - "5000"
 
 volumes:
   mongo_data:
-
-networks:
-  backend:
-    driver: bridge
