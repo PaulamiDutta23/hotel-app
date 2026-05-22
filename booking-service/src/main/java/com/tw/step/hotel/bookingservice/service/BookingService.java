@@ -13,6 +13,8 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
+import com.tw.step.hotel.bookingservice.view.HotelView;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -22,12 +24,12 @@ import java.util.Optional;
 @Service
 public class BookingService {
     private final BookingRepository bookingRepository;
-    private final HotelRepository hotelRepository;
+    private final SearchServiceClient searchServiceClient;
     private int currentBookingId;
 
-    public BookingService(BookingRepository bookingRepository, HotelRepository hotelRepository) {
+    public BookingService(BookingRepository bookingRepository, SearchServiceClient searchServiceClient) {
         this.bookingRepository = bookingRepository;
-        this.hotelRepository = hotelRepository;
+        this.searchServiceClient = searchServiceClient;
         this.currentBookingId = 0;
     }
 
@@ -37,20 +39,22 @@ public class BookingService {
     }
 
     public BookingView bookHotel(String username, BookingRequest bookingRequest) throws HotelNotFoundException, InsufficientAvailableRoomsException {
-        Hotel hotel = hotelRepository.findHotelById(bookingRequest.hotelId());
+        ResponseEntity<HotelView> response =
+                searchServiceClient.bookHotel(bookingRequest);
 
-        if (hotel == null) throw new HotelNotFoundException(bookingRequest.hotelId());
+        if(!response.getStatusCode().is2xxSuccessful()) throw new InsufficientAvailableRoomsException(bookingRequest.hotelId(),bookingRequest.totalRooms());
+        HotelView hotelView = response.getBody();
 
-        if (!hotel.isRequestedRoomsAvailable(bookingRequest.totalRooms()))
-            throw new InsufficientAvailableRoomsException(hotel.getName(), bookingRequest.totalRooms());
-
-        Hotel updatedHotel = hotel.bookRooms(bookingRequest.totalRooms());
-        hotelRepository.save(updatedHotel);
-        double totalPrice = updatedHotel.calculatePrice(bookingRequest.totalRooms());
-        Booking booking = new Booking(++currentBookingId, username, updatedHotel.getName(), updatedHotel.getAvailableRooms(), totalPrice);
+        assert hotelView != null;
+        double totalPrice = calculatePrice(hotelView.pricePerDay(),bookingRequest.totalRooms());
+        Booking booking = new Booking(++currentBookingId, username, hotelView.name(), bookingRequest.totalRooms(), totalPrice);
         bookingRepository.save(booking);
 
         return booking.project(BookingView::new);
+    }
+
+    private double calculatePrice(double pricePerDay, int rooms) {
+        return pricePerDay * rooms;
     }
 
     public byte[] generateReceipt(int bookingId) throws Exception, BookingNotFoundException {
