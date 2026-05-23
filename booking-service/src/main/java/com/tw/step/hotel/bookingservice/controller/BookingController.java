@@ -1,13 +1,13 @@
 package com.tw.step.hotel.bookingservice.controller;
 
-import com.tw.step.hotel.bookingservice.exception.BookingNotFoundException;
-import com.tw.step.hotel.bookingservice.exception.InsufficientAvailableRoomsException;
 import com.tw.step.hotel.bookingservice.service.BookingService;
 import com.tw.step.hotel.bookingservice.view.BookingRequest;
 import com.tw.step.hotel.bookingservice.view.BookingView;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.InsufficientResourcesException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -51,15 +54,17 @@ public class BookingController {
     public ResponseEntity<?> downloadReceipt(@PathVariable String bookingId, HttpServletRequest req) throws Exception {
         logger.info("{} {}", req.getMethod(), req.getRequestURI());
 
-        byte[] bytes = null;
-        try {
-            bytes = bookingService.generateReceipt(Integer.parseInt(bookingId));
-        } catch (BookingNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        Path filePath = Paths.get("/app/pdfs", "receipt_" + bookingId + ".pdf");
+
+        if (!Files.exists(filePath)) {
+            return ResponseEntity.notFound().build();
         }
+
+        Resource resource = new UrlResource(filePath.toUri());
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=receipt.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
-                .body(bytes);
+                .body(resource);
     }
 }

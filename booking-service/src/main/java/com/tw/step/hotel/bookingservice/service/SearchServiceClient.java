@@ -1,6 +1,5 @@
 package com.tw.step.hotel.bookingservice.service;
 
-import com.tw.step.hotel.bookingservice.exception.InsufficientAvailableRoomsException;
 import com.tw.step.hotel.bookingservice.view.BookingRequest;
 import com.tw.step.hotel.bookingservice.view.HotelView;
 import org.springframework.http.MediaType;

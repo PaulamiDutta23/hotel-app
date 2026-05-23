@@ -1,6 +1,6 @@
-import { MongoClient } from "mongodb";
-import { connect } from "@db/redis";
-import { createApp } from "./src/app.js";
+import {MongoClient} from "mongodb";
+import {connect} from "@db/redis";
+import {createApp} from "./src/app.js";
 
 const main = async () => {
   const mongoClient = new MongoClient(Deno.env.get("HOTEL_MONGO_URI") || "mongodb://localhost:27017");

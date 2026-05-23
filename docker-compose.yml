@@ -12,6 +12,7 @@ services:
       - user-service
       - booking-service
       - search-service
+      - worker-service
     restart: unless-stopped
 
   mongo:
@@ -27,7 +28,7 @@ services:
     image: redis:7
     container_name: hotel-redis
     ports:
-        - "6379:6379"
+      - "6379:6379"
     restart: unless-stopped
     volumes:
       - redis_data:/data
@@ -35,7 +36,7 @@ services:
   user-service:
     build:
       context: ./user-service
-#    container_name: user-service
+    #    container_name: user-service
     deploy:
       replicas: 2
     depends_on:
@@ -46,18 +47,21 @@ services:
   booking-service:
     build:
       context: ./booking-service
-#    container_name: booking-service
+    #    container_name: booking-service
     deploy:
       replicas: 2
     depends_on:
       - mongo
     environment:
       HOTEL_MONGO_URI: mongodb://mongo:27017/hoteldb
+      HOTEL_REDIS_URI: redis://redis:6379
+    volumes:
+      - pdf_data:/app/pdfs
 
   search-service:
     build:
       context: ./search-service
-#    container_name: search-service
+    #    container_name: search-service
     deploy:
       replicas: 2
     depends_on:
@@ -67,6 +71,19 @@ services:
       HOTEL_MONGO_URI: mongodb://mongo:27017/hoteldb
       REDIS_HOST: redis
 
+  worker-service:
+    build:
+      context: ./worker
+    deploy:
+      replicas: 1
+    environment:
+      - REDIS_HOST=redis
+    volumes:
+      - pdf_data:/app/pdfs
+    depends_on:
+      - redis
+
 volumes:
   mongo_data:
   redis_data:
+  pdf_data:

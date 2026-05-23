@@ -3,6 +3,8 @@ spring:
     name: booking-service
   mongodb:
     uri: ${HOTEL_MONGO_URI:mongodb://localhost:27017/hoteldb}
-
+  data:
+    redis:
+      url: ${HOTEL_REDIS_URI:redis://localhost:6379}
 server:
   port: 4000
