@@ -2,26 +2,21 @@ version: '3.9'
 
 services:
 
-  nginx:
+  nginx-search:
     image: nginx:latest
-    ports:
-      - "3000:80"
+    container_name: hotel-nginx-search
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/search.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - user-service
-      - booking-service
       - search-service
-      - worker-service
-    restart: unless-stopped
 
   mongo:
     image: mongo:7
     container_name: hotel-mongodb
     ports:
       - "27015:27017"
-    restart: unless-stopped
     volumes:
+      - ./db_init.sh:/docker-entrypoint-initdb.d/db_init.sh:ro
       - mongo_data:/data/db
 
   redis:
@@ -33,57 +28,30 @@ services:
     volumes:
       - redis_data:/data
 
-  user-service:
-    build:
-      context: ./user-service
-    #    container_name: user-service
-    deploy:
-      replicas: 2
-    depends_on:
-      - mongo
-    environment:
-      HOTEL_MONGO_URI: mongodb://mongo:27017/hoteldb
-
-  booking-service:
-    build:
-      context: ./booking-service
-    #    container_name: booking-service
-    deploy:
-      replicas: 2
-    depends_on:
-      - mongo
-    environment:
-      HOTEL_MONGO_URI: mongodb://mongo:27017/hoteldb
-      HOTEL_REDIS_URI: redis://redis:6379
-    volumes:
-      - pdf_data:/app/pdfs
 
   search-service:
     build:
       context: ./search-service
     #    container_name: search-service
     deploy:
-      replicas: 2
+      replicas: 1
     depends_on:
       - mongo
       - redis
     environment:
       HOTEL_MONGO_URI: mongodb://mongo:27017/hoteldb
       REDIS_HOST: redis
-
-  worker-service:
-    build:
-      context: ./worker
-    deploy:
-      replicas: 1
-    environment:
-      - REDIS_HOST=redis
-    volumes:
-      - pdf_data:/app/pdfs
-    depends_on:
-      - redis
+  
+  nginx-gateway: 
+    image: nginx:latest
+    container_name: hotel_nginx_gateway
+    ports:
+      - "3000:80"
+    volumes: 
+      - ./nginx/gateway.conf:/etc/nginx/nginx.conf:ro
+    depends_on: 
+     - nginx-search
 
 volumes:
   mongo_data:
   redis_data:
-  pdf_data:
