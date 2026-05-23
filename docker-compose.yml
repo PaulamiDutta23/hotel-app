@@ -26,7 +26,9 @@ services:
   user-service:
     build:
       context: ./user-service
-    container_name: user-service
+#    container_name: user-service
+    deploy:
+      replicas: 2
     depends_on:
       - mongo
     environment:
@@ -35,7 +37,9 @@ services:
   booking-service:
     build:
       context: ./booking-service
-    container_name: booking-service
+#    container_name: booking-service
+    deploy:
+      replicas: 2
     depends_on:
       - mongo
     environment:
@@ -44,7 +48,9 @@ services:
   search-service:
     build:
       context: ./search-service
-    container_name: search-service
+#    container_name: search-service
+    deploy:
+      replicas: 2
     depends_on:
       - mongo
     environment:
