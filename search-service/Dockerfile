@@ -1,22 +1,21 @@
-FROM gradle:9.5.0-jdk25 AS builder
+FROM denoland/deno:2.3.7 AS builder
 
 WORKDIR /app
 
-COPY build.gradle settings.gradle gradlew ./
-COPY gradle ./gradle
+COPY deno.json deno.lock* ./
 
-RUN gradle dependencies --no-daemon || true
+RUN deno cache main.js || true
 
-COPY src ./src
+COPY . .
 
-RUN gradle bootJar --no-daemon
+RUN deno cache main.js
 
-FROM eclipse-temurin:25-jre
+FROM denoland/deno:2.3.7
 
 WORKDIR /app
 
-COPY --from=builder /app/build/libs/*.jar app.jar
+COPY --from=builder /app /app
 
 EXPOSE 5000
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["deno", "-A",  "main.js"]
