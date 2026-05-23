@@ -39,8 +39,8 @@ services:
       - mongo
       - redis
     environment:
-      HOTEL_MONGO_URI: mongodb://mongo:27017/hoteldb
-      REDIS_HOST: redis
+      HOTEL_MONGO_URI: mongodb://10.193.22.20:27015/hotel-app
+      REDIS_HOST: 10.193.22.69
   
   nginx-gateway: 
     image: nginx:latest
