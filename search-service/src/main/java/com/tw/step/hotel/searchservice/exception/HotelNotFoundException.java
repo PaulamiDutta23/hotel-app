@@ -1,4 +1,4 @@
-package com.tw.step.hotel.bookingservice.exception;
+package com.tw.step.hotel.searchservice.exception;
 
 public class HotelNotFoundException extends Throwable {
     public HotelNotFoundException(String hotelId) {

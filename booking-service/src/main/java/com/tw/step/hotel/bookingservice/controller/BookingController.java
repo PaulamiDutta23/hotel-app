@@ -1,7 +1,6 @@
 package com.tw.step.hotel.bookingservice.controller;
 
 import com.tw.step.hotel.bookingservice.exception.BookingNotFoundException;
-import com.tw.step.hotel.bookingservice.exception.HotelNotFoundException;
 import com.tw.step.hotel.bookingservice.exception.InsufficientAvailableRoomsException;
 import com.tw.step.hotel.bookingservice.service.BookingService;
 import com.tw.step.hotel.bookingservice.view.BookingRequest;
@@ -15,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.InsufficientResourcesException;
 import java.util.List;
 
 @RestController
@@ -41,14 +41,15 @@ public class BookingController {
         BookingView booking = null;
         try {
             booking = bookingService.bookHotel(authentication.getName(),bookingRequest);
-        } catch (HotelNotFoundException | InsufficientAvailableRoomsException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch ( InsufficientResourcesException e) {
+            return ResponseEntity.badRequest().body("Booking failed!");
         }
         return ResponseEntity.ok(booking);
     }
 
     @GetMapping("{bookingId}/receipt.pdf")
-    public ResponseEntity<?> downloadReceipt(@PathVariable String bookingId) throws Exception {
+    public ResponseEntity<?> downloadReceipt(@PathVariable String bookingId, HttpServletRequest req) throws Exception {
+        logger.info("{} {}", req.getMethod(), req.getRequestURI());
 
         byte[] bytes = null;
         try {

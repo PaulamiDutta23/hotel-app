@@ -1,6 +1,5 @@
 package com.tw.step.hotel.searchservice.model;
 
-import com.tw.step.hotel.searchservice.model.HotelProjector;
 import com.tw.step.hotel.searchservice.view.HotelView;
 import lombok.Data;
 import org.springframework.data.annotation.Id;

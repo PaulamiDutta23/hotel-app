@@ -1,22 +1,20 @@
 package com.tw.step.hotel.bookingservice.service;
 
-import com.tw.step.hotel.bookingservice.exception.BookingNotFoundException;
-import com.tw.step.hotel.bookingservice.exception.HotelNotFoundException;
-import com.tw.step.hotel.bookingservice.exception.InsufficientAvailableRoomsException;
-import com.tw.step.hotel.bookingservice.model.Booking;
-import com.tw.step.hotel.bookingservice.model.Hotel;
-import com.tw.step.hotel.bookingservice.repository.BookingRepository;
-import com.tw.step.hotel.bookingservice.repository.HotelRepository;
-import com.tw.step.hotel.bookingservice.view.BookingRequest;
-import com.tw.step.hotel.bookingservice.view.BookingView;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
+import com.tw.step.hotel.bookingservice.exception.BookingNotFoundException;
+import com.tw.step.hotel.bookingservice.exception.InsufficientAvailableRoomsException;
+import com.tw.step.hotel.bookingservice.model.Booking;
+import com.tw.step.hotel.bookingservice.repository.BookingRepository;
+import com.tw.step.hotel.bookingservice.view.BookingRequest;
+import com.tw.step.hotel.bookingservice.view.BookingView;
 import com.tw.step.hotel.bookingservice.view.HotelView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.naming.InsufficientResourcesException;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Optional;
@@ -38,11 +36,10 @@ public class BookingService {
         return bookings.stream().map((booking) -> booking.project(BookingView::new)).toList();
     }
 
-    public BookingView bookHotel(String username, BookingRequest bookingRequest) throws HotelNotFoundException, InsufficientAvailableRoomsException {
+    public BookingView bookHotel(String username, BookingRequest bookingRequest) throws InsufficientResourcesException {
         ResponseEntity<HotelView> response =
                 searchServiceClient.bookHotel(bookingRequest);
 
-        if(!response.getStatusCode().is2xxSuccessful()) throw new InsufficientAvailableRoomsException(bookingRequest.hotelId(),bookingRequest.totalRooms());
         HotelView hotelView = response.getBody();
 
         assert hotelView != null;

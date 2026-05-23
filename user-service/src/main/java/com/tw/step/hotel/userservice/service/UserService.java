@@ -4,7 +4,6 @@ import com.tw.step.hotel.userservice.exception.InvalidCredentialsException;
 import com.tw.step.hotel.userservice.exception.InvalidUserNameCreationException;
 import com.tw.step.hotel.userservice.model.User;
 import com.tw.step.hotel.userservice.repository.UserRepository;
-import com.tw.step.hotel.userservice.service.JwtService;
 import com.tw.step.hotel.userservice.view.UserView;
 import org.springframework.stereotype.Service;
 
