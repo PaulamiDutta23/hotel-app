@@ -8,3 +8,4 @@ mongosh "mongodb://localhost:27017/hotel-app" --eval '
     { name: "The Diamond", city: "Pune", availableRooms: 40, pricePerDay:3030.20 },
     { name: "ITC Royal Bengal", city: "Hyderabad", availableRooms: 30, pricePerDay:10030.20 }
   ]);
+'
